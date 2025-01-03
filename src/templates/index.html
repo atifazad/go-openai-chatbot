@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        #chat-container {
+            border: 1px solid #ccc;
+            padding: 10px;
+            max-width: 600px;
+            margin: auto;
+        }
+        #messages {
+            height: 300px;
+            overflow-y: scroll;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        #user-input {
+            width: calc(100% - 22px);
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="chat-container">
+        <h1>Chatbot</h1>
+        <div id="messages"></div>
+        <input type="text" id="user-input" placeholder="Type your message here..." />
+        <button id="send-button">Send</button>
+    </div>
+
+    <script>
+        document.getElementById('send-button').onclick = function() {
+            const userInput = document.getElementById('user-input').value;
+            if (userInput) {
+                const messagesDiv = document.getElementById('messages');
+                messagesDiv.innerHTML += `<div>User: ${userInput}</div>`;
+                document.getElementById('user-input').value = '';
+
+                fetch('/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ user_input: userInput })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    messagesDiv.innerHTML += `<div>Bot: ${data.bot_response}</div>`;
+                    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                });
+            }
+        };
+    </script>
+</body>
+</html>
